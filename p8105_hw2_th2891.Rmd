@@ -5,5 +5,28 @@ output: github_document
 
 ```{r setup}
 library(tidyverse)
+library(readxl)
+library(haven)
 ```
+
+## Reading in Mr. Trash Wheel excel file 
+  Importing file
+    * specifying range
+    * excluding rows with images
+  cleaning names
+  filter out rows with monthly totals
+    * just want dumpster information
+
+
+```{r}
+trash_df = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", range = "A2:N408")
+trash_df = janitor::clean_names(trash_df)
+drop_na(trash_df)
+
+```
+
+ 
+    
+
+
 
