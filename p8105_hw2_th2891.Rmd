@@ -17,7 +17,14 @@ library(readxl)
     * just want dumpster information
   Round sports_balls to an integer
 
-
+```{r}
+trash_df = 
+  read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 1, range = "A2:N408") %>%
+ janitor::clean_names() %>% 
+  drop_na() %>% 
+   mutate(
+      sports_balls = as.integer(sports_balls))
+```
 
 
  mutate(sports_balls = as.integer(trash_df$sports_balls))
@@ -53,7 +60,9 @@ precip_2019_df =
   
 ```{r}
 precip_df = 
-  left_join(precip_2018_df, precip_2019_df, by = "month")
+  left_join(precip_2018_df, precip_2019_df, by = "month") %>% 
+  mutate(
+      month = month.name)
 ```
 
 
