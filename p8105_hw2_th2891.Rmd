@@ -22,8 +22,17 @@ library(haven)
 trash_df = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", range = "A2:N408")
 trash_df = janitor::clean_names(trash_df)
 drop_na(trash_df)
-
+round(trash_df$sports_balls)
 ```
+
+## Read and clean precipitation data for 2018 & 2019
+
+```{r}
+precip_2018_df = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 5,range = "A2:B15")
+
+precip_2019_df = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 4,range = "A2:B15")
+```
+
 
  
     
