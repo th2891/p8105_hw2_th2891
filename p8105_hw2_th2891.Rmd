@@ -6,7 +6,6 @@ output: github_document
 ```{r setup}
 library(tidyverse)
 library(readxl)
-library(haven)
 ```
 
 ## Reading in Mr. Trash Wheel excel file 
@@ -16,25 +15,50 @@ library(haven)
   cleaning names
   filter out rows with monthly totals
     * just want dumpster information
+  Round sports_balls to an integer
 
 
-```{r}
-trash_df = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", range = "A2:N408")
-trash_df = janitor::clean_names(trash_df)
-drop_na(trash_df)
-round(trash_df$sports_balls)
-```
+
+
+ mutate(sports_balls = as.integer(trash_df$sports_balls))
 
 ## Read and clean precipitation data for 2018 & 2019
 
-```{r}
-precip_2018_df = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 5,range = "A2:B15")
+Importing 2018 and 2019 precipitation sheets
 
-precip_2019_df = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 4,range = "A2:B15")
+  Cleaning and renaming data 
+
+```{r}
+precip_2018_df = 
+  read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 5, range = "A2:B15") %>% 
+  janitor::clean_names() %>% 
+  drop_na() %>% 
+  mutate(year = "2018") %>% 
+  select(year, everything())
+  
+
+precip_2019_df = 
+  read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 4,range = "A2:B15") %>% 
+  janitor::clean_names() %>% 
+  drop_na() %>% 
+  mutate(
+     year = "2019") %>% 
+  select(year, everything())
 ```
 
 
- 
+
+## Joining 2019 and 2018 data
+  Using left join
+  
+```{r}
+precip_df = 
+  left_join(precip_2018_df, precip_2019_df, by = "month")
+```
+
+
+
+
     
 
 
