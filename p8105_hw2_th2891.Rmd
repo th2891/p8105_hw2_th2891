@@ -12,6 +12,7 @@ library(readxl)
 
 ## Reading in Mr. Trash Wheel excel file 
   Importing file
+  
 * specifying range
 * excluding rows with images
 * cleaning names
@@ -116,6 +117,7 @@ snp_df = read.csv("./data/fivethirtyeight_datasets/snp.csv") %>%
 
 
 Tidy unemployment
+
 * cleaning
 * switching from wide to long format
 
@@ -130,6 +132,7 @@ unemployment_df = read.csv("./data/fivethirtyeight_datasets/unemployment.csv") %
 ```
 
 Merging data sets
+
 1. starting with snp & pols
 
 ```{r}
@@ -153,6 +156,7 @@ There are `r nrow(combined_df)` observations in `combined_df` and the variables 
 # Problem 3
 
 Loading popular baby names data set
+
 1. Cleaning data
 2. Formating all values in lower case
 3. removing duplicates
@@ -167,9 +171,10 @@ baby_df = read.csv("./data/Popular_Baby_Names.csv") %>%
 ```
 
 Making a table
+
 1. Ranking popularity of the name "Olivia"
-  ** rows for ethnicity
-  ** columns for year
+  * rows for ethnicity
+  * columns for year
 
 Reorder years
 Error with ethnicity name
@@ -197,6 +202,7 @@ popular_names_male_df =
 
 
 Making a scatter plot for white non-hispanic children born in 2016
+
 1. Y- axis = number of children with a name
 2. X-axis = rank in popularity of that name
   
