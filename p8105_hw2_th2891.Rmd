@@ -64,7 +64,7 @@ precip_2019_df =
 precip_df = 
   left_join(precip_2018_df, precip_2019_df, by = "month") %>% 
   mutate(
-      month = month.name)
+      month = month.name[month])
 ```
 
 
@@ -75,16 +75,50 @@ precip_df =
 
 Importing and cleaning pols-month, unemployment, and snp
 
-## need to make month name from numeric!!!
-## Fix president variable
+ Starting with pols-month
+ 
 
 ```{r}
 pols_df = read.csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
   janitor::clean_names() %>% 
-  separate(mon, into = c("year","month", "day")) %>%   unite('president', prez_dem,prez_gop, sep = "") %>% 
+  separate(mon, into = c("year","month", "day")) %>%  
+  mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.name[month]) %>% 
+  unite('president', prez_dem,prez_gop, sep = "") %>% 
   mutate(
       president = as.numeric(president)) %>% 
   mutate(president = recode(president, '10' = 'dem', '01' = 'gop')) %>% 
   select(-day)
 ```
 
+Cleaning snp
+* reformatting date
+* separating date into day, month, year (removing day)
+* recoding month into month names
+
+
+```{r}
+library(lubridate)
+
+snp_df = read.csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  mutate(date = lubridate::mdy(date)) %>% 
+  separate(date, into = c("year", "month", "day")) %>% 
+  mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.name[month]) %>% 
+  select(-day)
+```
+
+
+Tidy unemployment
+* cleaning
+* switching from wide to long format
+
+```{r}
+unemployment_df = read.csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to="unemp_perc")
+```
+
+  
