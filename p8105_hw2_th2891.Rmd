@@ -12,12 +12,12 @@ library(readxl)
 
 ## Reading in Mr. Trash Wheel excel file 
   Importing file
-    * specifying range
-    * excluding rows with images
-  cleaning names
-  filter out rows with monthly totals
-    * just want dumpster information
-  Round sports_balls to an integer
+* specifying range
+* excluding rows with images
+* cleaning names
+* filter out rows with monthly totals
+** just want dumpster information
+* Round sports_balls to an integer
 
 ```{r}
 trash_df = 
@@ -69,9 +69,9 @@ precip_df =
   
 ```
 
-There are `r nrow(trash_df)` observations in `trash_df` and the variables are `r names(trash_df)`. There are `nrows(precip_df)` observations in `precip_df`, which combines the precipitation data from 2018 and 2019. The varaibles in this combined data set are `r names(precip_df)`.
+There are `r nrow(trash_df)` observations in `trash_df` and the variables are `r names(trash_df)`. There are `nrow(precip_df)` observations in `precip_df`, which combines the precipitation data from 2018 and 2019. The varaibles in this combined data set are `r names(precip_df)`. 
 
-The median number of sports balls in a dumpster in 2019 was `r median(trash_df$sports_balls, na.rm=TRUE)`. 
+The median number of sports balls in a dumpster in 2019 was `r median(pull(trash_df, sports_balls))`. The total precipitation in 2018 was `r sum(pull(precip_2018_df, total))`. 
 
 ### insert paragraph using in line code
     
@@ -146,9 +146,9 @@ combined_df =
   left_join(pols_snp_df, unemployment_df, by = c("year", "month")) 
 ```
 
-There are `r nrow(combined_df)` observations in `combined_df` and the variables are `r names(combined_df)`. 
-* range of years
-* 
+There are `r nrow(combined_df)` observations in `combined_df` and the variables are `r names(combined_df)`. The range of `years` is `r range(pull(combined_df, year))`.
+
+
 
 # Problem 3
 
