@@ -29,8 +29,6 @@ trash_df =
 ```
 
 
- mutate(sports_balls = as.integer(trash_df$sports_balls))
-
 ## Read and clean precipitation data for 2018 & 2019
 
 Importing 2018 and 2019 precipitation sheets
@@ -43,6 +41,8 @@ precip_2018_df =
   janitor::clean_names() %>% 
   drop_na() %>% 
   mutate(year = "2018") %>% 
+   mutate(
+     month = as.integer(month)) %>% 
   select(year, everything())
   
 
@@ -52,9 +52,10 @@ precip_2019_df =
   drop_na() %>% 
   mutate(
      year = "2019") %>% 
+   mutate(
+     month = as.integer(month)) %>% 
   select(year, everything())
 ```
-
 
 
 ## Joining 2019 and 2018 data
@@ -62,12 +63,15 @@ precip_2019_df =
   
 ```{r}
 precip_df = 
-  left_join(precip_2018_df, precip_2019_df, by = "month") %>% 
+  bind_rows(precip_2018_df, precip_2019_df) %>% 
   mutate(
       month = month.name[month])
+  
 ```
 
+There are `r nrow(trash_df)` observations in `trash_df` and the variables are `r names(trash_df)`. There are `nrows(precip_df)` observations in `precip_df`, which combines the precipitation data from 2018 and 2019. The varaibles in this combined data set are `r names(precip_df)`.
 
+The median number of sports balls in a dumpster in 2019 was `r median(trash_df$sports_balls, na.rm=TRUE)`. 
 
 ### insert paragraph using in line code
     
@@ -83,18 +87,19 @@ pols_df = read.csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
   janitor::clean_names() %>% 
   separate(mon, into = c("year","month", "day")) %>%  
   mutate(month = as.numeric(month)) %>% 
-  mutate(month = month.name[month]) %>% 
+  mutate(month = month.abb[month]) %>% 
   unite('president', prez_dem,prez_gop, sep = "") %>% 
   mutate(
       president = as.numeric(president)) %>% 
   mutate(president = recode(president, '10' = 'dem', '01' = 'gop')) %>% 
+   mutate(month = tolower(month)) %>% 
   select(-day)
 ```
 
-Cleaning snp
-* reformatting date
-* separating date into day, month, year (removing day)
-* recoding month into month names
+ Cleaning snp
+1.  reformatting date
+2.  separating date into day, month, year (removing day)
+3. recoding month into month names
 
 
 ```{r}
@@ -104,7 +109,8 @@ snp_df = read.csv("./data/fivethirtyeight_datasets/snp.csv") %>%
   mutate(date = lubridate::mdy(date)) %>% 
   separate(date, into = c("year", "month", "day")) %>% 
   mutate(month = as.numeric(month)) %>% 
-  mutate(month = month.name[month]) %>% 
+  mutate(month = month.abb[month]) %>% 
+   mutate(month = tolower(month)) %>% 
   select(-day)
 ```
 
@@ -115,10 +121,82 @@ Tidy unemployment
 
 ```{r}
 unemployment_df = read.csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
   pivot_longer(
-    Jan:Dec,
+    jan:dec,
     names_to = "month",
-    values_to="unemp_perc")
+    values_to = "unemp_perc") %>% 
+    mutate(year = as.character(year))
 ```
 
+Merging data sets
+1. starting with snp & pols
+
+```{r}
+pols_snp_df = 
+    right_join(pols_df, snp_df, by = c("year", "month"))
+```
+
+Merging unemployment into pols_snp
+
+## Joining all three data sets
+
+```{r}
+combined_df =
+  left_join(pols_snp_df, unemployment_df, by = c("year", "month")) 
+```
+
+There are `r nrow(combined_df)` observations in `combined_df` and the variables are `r names(combined_df)`. 
+* range of years
+* 
+
+# Problem 3
+
+Loading popular baby names data set
+1. Cleaning data
+2. Formating all values in lower case
+3. removing duplicates
+
+```{r}
+baby_df = read.csv("./data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() %>%
+  mutate(child_s_first_name = tolower(child_s_first_name),
+         gender = tolower(gender),
+         ethnicity = tolower(ethnicity)) %>%
+  distinct(child_s_first_name, year_of_birth, .keep_all = TRUE)
+```
+
+Making a table
+1. Ranking popularity of the name "Olivia"
+  ** rows for ethnicity
+  ** columns for year
+
+Reorder years
+Error with ethnicity name
+```{r}
+baby_olivia_df = 
+    subset(baby_df, child_s_first_name == "olivia") %>% 
+  select(ethnicity, year_of_birth, rank) %>%
+ pivot_wider(
+   names_from = year_of_birth,
+   values_from = rank
+  )  
+```
+2. Making table for popular "boy" names over time 
+
+```{r}
+popular_names_male_df = 
+  subset(baby_df, gender == "male") %>% 
+  select(child_s_first_name, year_of_birth, rank) %>% 
+  pivot_wider(
+    names_from = year_of_birth,
+    values_from = rank
+  )
+```
+
+
+
+Making a scatter plot fro white non-hispanic children born in 2016
+1. Y- axis = number of children with a name
+2. X-axis = rank in popularity of that name
   
