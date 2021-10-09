@@ -8,6 +8,8 @@ library(tidyverse)
 library(readxl)
 ```
 
+# Problem 1
+
 ## Reading in Mr. Trash Wheel excel file 
   Importing file
     * specifying range
@@ -67,8 +69,22 @@ precip_df =
 
 
 
-
+### insert paragraph using in line code
     
+# Problem 2 
 
+Importing and cleaning pols-month, unemployment, and snp
 
+## need to make month name from numeric!!!
+## Fix president variable
+
+```{r}
+pols_df = read.csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year","month", "day")) %>%   unite('president', prez_dem,prez_gop, sep = "") %>% 
+  mutate(
+      president = as.numeric(president)) %>% 
+  mutate(president = recode(president, '10' = 'dem', '01' = 'gop')) %>% 
+  select(-day)
+```
 
